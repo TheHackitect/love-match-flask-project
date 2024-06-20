@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Love & Dating</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #152a44, #5f197b);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container-fluid {
+            padding-top: 2rem;
+        }
+        .sidebar {
+            background: rgba(0, 0, 0, 0.7);
+            min-height: 100vh;
+            padding: 1rem;
+            border-radius: 15px;
+        }
+        .sidebar a {
+            color: #fff;
+            display: block;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .header, .footer {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+        }
+        .card-custom {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            margin-bottom: 1rem;
+            padding: 1rem;
+        }
+        .table {
+            color: #fff;
+        }
+        .btn-custom {
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        .btn-custom:hover {
+            background-color: #2980b9;
+        }
+        .first-text{
+            color: #9e6ff3;
+            font-family: cursive;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1><span class="first-text">Admin</span> Dashboard</h1>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 sidebar">
+                <h3 class="text-center">Navigation</h3>
+                <a href="#overview"><i class="fas fa-tachometer-alt"></i> Overview</a>
+                <a href="#users"><i class="fas fa-users"></i> Users</a>
+                <a href="#analytics"><i class="fas fa-chart-line"></i> Analytics</a>
+                <a href="#reports"><i class="fas fa-flag"></i> Reports</a>
+                <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ml-sm-auto col-lg-9">
+                <!-- Overview -->
+                <div id="overview" class="mb-4">
+                    <h2>Overview</h2>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card card-custom">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-users"></i> Total Users</h5>
+                                    <p class="card-text">1,234</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card card-custom">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-user-check"></i> Active Users</h5>
+                                    <p class="card-text">567</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card card-custom">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-flag"></i> Reports</h5>
+                                    <p class="card-text">34</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card card-custom">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-cogs"></i> Settings</h5>
+                                    <p class="card-text">4</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Management -->
+                <div id="users" class="mb-4">
+                    <h2>Users Management</h2>
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Telegram ID</th>
+                                <th>Date Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>User 1</td>
+                                <td>user1@example.com</td>
+                                <td>123-456-7890</td>
+                                <td>@user1telegram</td>
+                                <td>2024-01-01</td>
+                                <td>
+                                    <button class="btn btn-custom"><i class="fas fa-edit"></i> Edit</button>
+                                    <button class="btn btn-custom"><i class="fas fa-trash-alt"></i> Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>User 2</td>
+                                <td>user2@example.com</td>
+                                <td>098-765-4321</td>
+                                <td>@user2telegram</td>
+                                <td>2024-02-01</td>
+                                <td>
+                                    <button class="btn btn-custom"><i class="fas fa-edit"></i> Edit</button>
+                                    <button class="btn btn-custom"><i class="fas fa-trash-alt"></i> Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Analytics -->
+                <div id="analytics" class="mb-4">
+                    <h2>Site Analytics</h2>
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <p>Analytics content goes here...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports -->
+                <div id="reports" class="mb-4">
+                    <h2>Reports</h2>
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <p>Reports content goes here...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div id="settings" class="mb-4">
+                    <h2>Site Settings</h2>
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <p>Settings content goes here...</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Love & Dating. All rights reserved.</p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

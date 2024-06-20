@@ -1,0 +1,131 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Install logs
+pip-log.txt
+
+# Virtualenv
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# pyright
+.pyright
+
+# pyre
+.pyre/
+
+# Profiling data
+.prof
+
+# Other
+*.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# PyCharm
+.idea/
+*.iml
+
+# Visual Studio Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# Logs
+logs/
+*.log
+
+# Local environment variables
+.env
+
+# Node modules (if any)
+node_modules/
+
+# Sphinx documentation
+docs/_build/
+
+# JetBrains
+.idea/
+
+# Coverage reports
+coverage/
+
+# Pytest
+.pytest_cache/
+
+# celery beat schedule file
+celerybeat-schedule
+
+# dotenv
+.env
+.env.local
+.env.production
+.env.test
+.env.*.local
+
+# Pycharm project files
+.idea/
+
+# Local Heroku settings
+*.env.local
+
+# Flask instance folder
+instance/
+
+# Environments
+.envrc
+
+# Custom
+local_settings.py
