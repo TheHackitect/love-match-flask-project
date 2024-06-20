@@ -1,5 +1,7 @@
 # Love & Dating Website Project
 
+![Love match party](./static/images/preview.PNG)
+
 ## Introduction
 This project is a Love & Dating website developed using Python Flask, Bootstrap, and jQuery. The website provides a captivating platform for users to find their perfect match, make friends, and connect with amazing people. The project includes user-facing pages such as the home page, sign-up page, sign-in page, and user dashboard, as well as an admin dashboard for site management.
 
