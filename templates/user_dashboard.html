@@ -27,32 +27,18 @@
             margin-bottom: 2rem;
             border-radius: 15px;
         }
-        .avatar1 {
-            width: 250px;
-            height: 250px;
+        .avatar {
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
-            /* border: 2px solid #fff; */
             object-fit: cover;
             margin-bottom: 1rem;
             background-color: rgba(255, 255, 255, 0.2);
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
-
-        .avatar2 {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            /* border: 2px solid #fff; */
-            object-fit: cover;
-            margin-bottom: 1rem;
-            background-color: rgba(255, 255, 255, 0.2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
         .info {
             margin-bottom: 2rem;
         }
@@ -115,7 +101,7 @@
 
     <!-- Welcome Jumbotron -->
     <div class="jumbotron jumbotron-custom">
-        <h1 class="display-4"><span class="first-text">Welcome</span>, User Name!</h1>
+        <h1 class="display-4"><span class="first-text">Welcome</span>, {{ current_user.name }}!</h1>
         <p class="lead">Explore your matches, update your profile, and connect with amazing people.</p>
     </div>
 
@@ -126,34 +112,32 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="text-center mb-4">
-                            <div class="avatar1">
-                                <i class="fas fa-user fa-5x"></i>
+                            <div class="avatar">
+                                <img src="{{ url_for('static', filename=current_user.profile_image_url) }}" alt="Profile Picture" class="img-fluid">
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="info">
                             <hr>
-                            <p><i class="fas fa-user"></i> <strong>Name:</strong> User Name</p>
-                            <p><i class="fas fa-calendar-alt"></i> <strong>Date Joined:</strong> January 1, 2020</p>
-                            <p><i class="fas fa-phone"></i> <strong>Phone Number:</strong> 123-456-7890</p>
-                            <p><i class="fas fa-envelope"></i> <strong>Email:</strong> user@example.com</p>
-                            <p><i class="fab fa-telegram-plane"></i> <strong>Telegram ID:</strong> @usertelegram</p>
-                            <p><i class="fas fa-info-circle"></i> <strong>Bio:</strong> This is a short bio of the user.</p>
-                            <p><i class="fas fa-id-badge"></i> <strong>Unique Number:</strong> 123456</p>
+                            <p><i class="fas fa-user"></i> <strong>Name:</strong> {{ current_user.name }}</p>
+                            <p><i class="fas fa-calendar-alt"></i> <strong>Date Joined:</strong> {{ current_user.time.strftime('%B %d, %Y') }}</p>
+                            <p><i class="fas fa-phone"></i> <strong>Phone Number:</strong> {{ current_user.phone_number }}</p>
+                            <p><i class="fas fa-envelope"></i> <strong>Email:</strong> {{ current_user.email }}</p>
+                            <p><i class="fab fa-telegram-plane"></i> <strong>Telegram ID:</strong> {{ current_user.telegram_user_id }}</p>
+                            <p><i class="fas fa-info-circle"></i> <strong>Bio:</strong> {{ current_user.bio }}</p>
+                            <p><i class="fas fa-id-badge"></i> <strong>Unique Number:</strong> {{ current_user.id }}</p>
                             <hr>
                         </div>
                     </div>
                 </div>
-                
-                
             </div>
         </div>
 
         <!-- Action Buttons -->
         <div class="text-center">
-            <a href="#" class="btn btn-custom"><i class="fas fa-edit"></i> Edit</a>
-            <a href="#" class="btn btn-custom"><i class="fas fa-search"></i> Find Match</a>
+            <a href="{{ url_for('edit_profile') }}" class="btn btn-custom"><i class="fas fa-edit"></i> Edit</a>
+            <a href="{{ url_for('match_search') }}" class="btn btn-custom"><i class="fas fa-search"></i> Find Match</a>
             <a href="https://t.me/YourBot" class="btn btn-custom"><i class="fab fa-telegram-plane"></i> Telegram Bot</a>
             <a href="https://t.me/YourChannel" class="btn btn-custom"><i class="fas fa-bullhorn"></i> Telegram Channel</a>
         </div>
@@ -161,58 +145,25 @@
         <!-- My Matches -->
         <h3 class="mt-4">My Matches</h3>
         <div class="matches d-flex justify-content-between flex-wrap">
+            {% for match in current_user.matches %}
             <div class="card card-custom text-center">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-2 match-data-left">
-                            <div class="avatar2">
-                                <i class="fas fa-user fa-2x"></i>
+                            <div class="avatar">
+                                <img src="{{ url_for('static', filename=match.participant.profile_image_url) }}" alt="Match Profile Picture" class="img-fluid">
                             </div>
                         </div>
                         <div class="col-md-10 match-data-right">
-                            <h6 class="card-title">Match Name 1</h6>
-                            <h6 class="card-text"><i class="fas fa-id-badge"></i> <strong>Unique Number:</strong> 654321</h6>
-                            <button class="btn btn-custom bio-btn" onclick="toggleBio(1)"><i class="fas fa-eye"></i> Click to Reveal Bio</button>
-                            <p class="bio-text" id="bio-1">This is the hidden bio of Match Name 1.</p>
+                            <h6 class="card-title">{{ match.participant.name }}</h6>
+                            <h6 class="card-text"><i class="fas fa-id-badge"></i> <strong>Unique Number:</strong> {{ match.participant.id }}</h6>
+                            <button class="btn btn-custom bio-btn" onclick="toggleBio({{ match.id }})"><i class="fas fa-eye"></i> Click to Reveal Bio</button>
+                            <p class="bio-text" id="bio-{{ match.id }}">This is the hidden bio of {{ match.participant.name }}.</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card card-custom text-center">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-2 match-data-left">
-                            <div class="avatar2">
-                                <i class="fas fa-user fa-2x"></i>
-                            </div>
-                        </div>
-                        <div class="col-md-10 match-data-right">
-                            <h6 class="card-title">Match Name 1</h6>
-                            <h6 class="card-text"><i class="fas fa-id-badge"></i> <strong>Unique Number:</strong> 654321</h6>
-                            <button class="btn btn-custom bio-btn" onclick="toggleBio(2)"><i class="fas fa-eye"></i> Click to Reveal Bio</button>
-                            <p class="bio-text" id="bio-2">This is the hidden bio of Match Name 1.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card card-custom text-center">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-2 match-data-left">
-                            <div class="avatar2">
-                                <i class="fas fa-user fa-2x"></i>
-                            </div>
-                        </div>
-                        <div class="col-md-10 match-data-right">
-                            <h6 class="card-title">Match Name 1</h6>
-                            <h6 class="card-text"><i class="fas fa-id-badge"></i> <strong>Unique Number:</strong> 654321</h6>
-                            <button class="btn btn-custom bio-btn" onclick="toggleBio(3)"><i class="fas fa-eye"></i> Click to Reveal Bio</button>
-                            <p class="bio-text" id="bio-3">This is the hidden bio of Match Name 1.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
+            {% endfor %}
         </div>
 
         <!-- Links to Telegram Channel and Bot -->

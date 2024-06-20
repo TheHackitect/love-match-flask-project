@@ -62,54 +62,65 @@
         </div>
 
         <!-- Sign Up Form -->
-        <form id="signupForm" class="row">
+        <form id="signupForm" class="row" action="/signup" method="post" enctype="multipart/form-data">
             <!-- First Column -->
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="name">Full Name</label>
-                    <input type="text" class="form-control" id="name" placeholder="Enter Name here" required>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name here" required>
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone Number (i.e. 6092234567)</label>
-                    <input type="number" class="form-control" id="phone" placeholder="Enter Phone number here" required>
+                    <input type="number" class="form-control" id="phone" name="phone" placeholder="Enter Phone number here" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
                 </div>
                 <div class="form-group">
                     <label for="telegramId">Telegram User ID [ 0123456789 ] <a href="https://t.me/Queerhtxbot?start=GetId" target="_blank">(Get it here)</a></label>
-                    <input type="text" class="form-control" id="telegramId" placeholder="Get Your Telegram ID and Enter here" required>
+                    <input type="text" class="form-control" id="telegramId" name="telegramId" placeholder="Get Your Telegram ID and Enter here" required>
                 </div>
             </div>
             <!-- Second Column -->
             <div class="col-md-6">
                 <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter Username here" required>
+                </div>
+                <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Type your password here" required>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Type your password here" required>
                 </div>
                 <div class="form-group">
                     <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirmPassword" placeholder="Retype your password here" required>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Retype your password here" required>
                 </div>
                 <div class="form-group">
                     <label for="preferences">Dating Preference</label><br>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="preferenceFluid" value="Fluid">
+                        <input class="form-check-input" type="checkbox" id="preferenceFluid" name="preferences" value="Fluid">
                         <label class="form-check-label" for="preferenceFluid">Fluid</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="preferenceWomyn4Womyn" value="Womyn4Womyn">
+                        <input class="form-check-input" type="checkbox" id="preferenceWomyn4Womyn" name="preferences" value="Womyn4Womyn">
                         <label class="form-check-label" for="preferenceWomyn4Womyn">Womyn4Womyn</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="preferenceMen4Men" value="Men4Men">
+                        <input class="form-check-input" type="checkbox" id="preferenceMen4Men" name="preferences" value="Men4Men">
                         <label class="form-check-label" for="preferenceMen4Men">Men4Men</label>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="bio">Short Bio </label>
-                    <textarea class="form-control" id="bio" rows="3" required placeholder="Include Age, Relationship Type Seeking, Pronouns, Love language"></textarea>
+                    <textarea class="form-control" id="bio" name="bio" rows="3" required placeholder="Include Age, Relationship Type Seeking, Pronouns, Love language"></textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <!-- Other input fields -->
+                <div class="form-group">
+                    <label for="profileImage">Profile Image</label>
+                    <input type="file" class="form-control" id="profileImage" name="profileImage" accept="image/png, image/jpeg, image/jpg" required>
                 </div>
             </div>
             <!-- Additional Fields (in two-column layout) -->
@@ -144,6 +155,7 @@
                         <label class="form-check-label" for="hearEventsNo">No</label>
                     </div>
                 </div>
+                
             </div>
             <!-- Submit Button and Links -->
             <div class="col-12">
@@ -177,3 +189,4 @@
     </script>
 </body>
 </html>
+
