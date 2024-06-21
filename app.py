@@ -46,7 +46,6 @@ async def send_async_email(recipient_email, subject, message_html):
 async def send_async_telegram(chat_id, message):
     bot = Bot(token=TELEGRAM_BOT_TOKEN)
     # try:
-    print(chat_id)
     await bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
     # except TelegramError as e:
     #     app.logger.error(f'Telegram notification failed: {str(e)}')
@@ -211,7 +210,7 @@ async def add_match(match_id):
                                                 participant_phone=participant.phone_number,
                                                 participant_telegram=participant.telegram_user_id,
                                                 participant_image=participant.profile_image_url)
-    await send_async_email(participant.email, participant_email_subject, participant_email_template)
+    await send_async_email(match.email, participant_email_subject, participant_email_template)
 
     match_email_subject = 'New Match Notification'
     match_email_template = render_template('match_email_template.html',
@@ -220,7 +219,7 @@ async def add_match(match_id):
                                            participant_phone=match.phone_number,
                                            participant_telegram=match.telegram_user_id,
                                            participant_image=match.profile_image_url)
-    await send_async_email(match.email, match_email_subject, match_email_template)
+    await send_async_email(participant.email, match_email_subject, match_email_template)
 
     # Telegram notifications
     participant_telegram_message = f"You have been added as a match by {match.name}."
