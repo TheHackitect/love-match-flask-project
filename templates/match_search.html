@@ -45,13 +45,19 @@
             border-radius: 10px;
             color: #fff;
             margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .card-custom .card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .matches {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
         }
-        .match-data-left {
+        /* .match-data-left {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -60,23 +66,22 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-        }
-        .avatar2 {
-            background-color: #fff;
-            color: #462483;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        } */
+        .avatar {
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
-            font-size: 24px;
-            margin: 0 auto;
+            object-fit: cover;
             margin-bottom: 1rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
         .bio-text {
             display: none;
-            margin-top: 1rem;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -85,6 +90,18 @@
     <div class="header">
         <h1>Find Matches</h1>
     </div>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="alert-container">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
     <div class="container">
         <!-- Search Form -->
@@ -94,11 +111,12 @@
                 <input type="text" class="form-control" id="search" placeholder="Enter name or unique number">
             </div>
             <button type="submit" class="btn btn-custom"><i class="fas fa-search"></i> Search</button>
+            <a href="/user_dashboard" class="btn btn-custom"><i class="fas fa-user"></i> Dashboard</a>
         </form>
 
         <!-- Search Results -->
         <h3 class="mt-4">Search Results</h3>
-        <div class="matches d-flex justify-content-between flex-wrap" id="matches-container">
+        <div class="matches" id="matches-container">
             <!-- Match cards will be dynamically added here -->
         </div>
     </div>
@@ -112,6 +130,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        function toggleBio(id) {
+                var bioText = $('#bio-' + id);
+                bioText.slideToggle();
+            }
         $(document).ready(function() {
             $('#search-form').on('submit', function(event) {
                 event.preventDefault();
@@ -126,18 +148,16 @@
                     },
                     method: 'POST',
                     data: JSON.stringify({ search_term: searchTerm }),
-                    body: JSON.stringify({ search_term: searchTerm }),
                     success: function(response) {
                         $('#matches-container').empty();
                         response.forEach(function(participant) {
-                            console.log(participant)
                             var card = `
                                 <div class="card card-custom text-center">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-2 match-data-left">
-                                                <div class="avatar2">
-                                                    <img src="static/${participant.profile_image_url}" alt="Avatar" class="img-fluid rounded-circle">
+                                                <div class="avatar">
+                                                    <img src="static/${participant.profile_image_url}" alt="Match Profile Picture" class="img-fluid">
                                                 </div>
                                             </div>
                                             <div class="col-md-10 match-data-right">
@@ -154,6 +174,9 @@
                                 </div>`;
                             $('#matches-container').append(card);
                         });
+                    },
+                    error: function(response) {
+                        console.log(response)
                     }
                 });
             }
@@ -162,6 +185,7 @@
                 var id = $(this).data('id');
                 $(`#bio-${id}`).slideToggle();
             });
+            
 
             $(document).on('click', '.add-match', function() {
                 var userId = $(this).data('id');
@@ -170,6 +194,9 @@
                     method: 'POST',
                     success: function() {
                         searchParticipants($('#search').val().trim());
+                    },
+                    error: function(response) {
+                        window.alert("You cannot add yourself as a match!")
                     }
                 });
             });
@@ -181,6 +208,9 @@
                     method: 'POST',
                     success: function() {
                         searchParticipants($('#search').val().trim());
+                    },
+                    error: function(response) {
+                        console.log(response)
                     }
                 });
             });

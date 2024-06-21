@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Notification</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #152a44;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        h2 {
+            color: #9e6ff3;
+            text-align: center;
+        }
+        .participant-info {
+            margin-bottom: 20px;
+        }
+        .info-label {
+            font-weight: bold;
+        }
+        .info-value {
+            margin-left: 10px;
+        }
+        .profile-image {
+            max-width: 100px;
+            border-radius: 50%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>New Match Notification</h2>
+        
+        <div class="participant-info">
+            <p><span class="info-label">Name:</span> <span class="info-value">{{ participant_name }}</span></p>
+            <p><span class="info-label">Email:</span> <span class="info-value">{{ participant_email }}</span></p>
+            <p><span class="info-label">Phone:</span> <span class="info-value">{{ participant_phone }}</span></p>
+            <p><span class="info-label">Telegram ID:</span> <span class="info-value">{{ participant_telegram }}</span></p>
+        </div>
+
+        <p>You have been added as a match by {{ match_name }}.</p>
+        
+        <img src="{{ participant_image }}" alt="Profile Image" class="profile-image">
+
+        <p>Thank you!</p>
+    </div>
+</body>
+</html>

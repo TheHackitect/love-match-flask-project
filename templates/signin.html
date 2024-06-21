@@ -41,24 +41,14 @@
         .form-group {
             position: relative;
         }
-
-        .form-control{
+        .form-control {
             background-color: #ffffff47;
             color: white;
         }
-
-        .first-text{
+        .first-text {
             color: #9e6ff3;
             font-family: cursive;
         }
-        /* .form-group .tooltip-custom {
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            color: #3498db;
-            cursor: pointer;
-        } */
     </style>
 </head>
 <body>
@@ -68,17 +58,28 @@
             <h1><span class="first-text">Sign In</span> to your Dashboard here</h1>
         </div>
 
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="alert-container">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
         <!-- Sign In Form -->
         <form id="signinForm" action="/signin" method="post">
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <input type="email" class="form-control" id="email" required>
-                <!-- <span class="tooltip-custom" data-toggle="tooltip" title="Please enter your email address."><i class="fas fa-info-circle"></i></span> -->
+                <input type="email" name="email" class="form-control" id="email" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" required>
-                <!-- <span class="tooltip-custom" data-toggle="tooltip" title="Please enter your password."><i class="fas fa-info-circle"></i></span> -->
+                <input type="password" name="password" class="form-control" id="password" required>
             </div>
             <button type="submit" class="btn btn-custom">Sign In</button>
             <div class="mt-3">

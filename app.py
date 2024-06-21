@@ -1,13 +1,22 @@
 import os
 import uuid
+import ezgmail
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from werkzeug.utils import secure_filename
-from flask import Flask, render_template, redirect, url_for, flash, send_from_directory, request, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, send_from_directory,abort, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from datetime import datetime
 from models import Participant, Match, Setting, Admin, db
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from telegram import Bot
+from telegram.error import TelegramError
+
+
+executor = ThreadPoolExecutor()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -16,12 +25,31 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['UPLOAD_FOLDER'] = 'static/uploads/profile_images'
 
+# Replace with your actual Telegram bot token
+TELEGRAM_BOT_TOKEN = '7478636127:AAH628CWYez8rfiJ1S26bqpLhvAvikPf3jw'
+
 db.init_app(app)  # Initialize SQLAlchemy with the Flask app instance
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'signin'
 login_manager.login_message_category = 'info'
 
+
+# # Replace with your actual Gmail credentials
+# GMAIL_EMAIL = 'your_email@gmail.com'
+# GMAIL_PASSWORD = 'your_password'
+
+async def send_async_email(recipient_email, subject, message_html):
+    ezgmail.send(recipient_email, subject, message_html, mimeSubtype="html")
+
+
+async def send_async_telegram(chat_id, message):
+    bot = Bot(token=TELEGRAM_BOT_TOKEN)
+    # try:
+    print(chat_id)
+    await bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
+    # except TelegramError as e:
+    #     app.logger.error(f'Telegram notification failed: {str(e)}')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -40,8 +68,9 @@ def signin():
         email = request.form.get('email')
         password = request.form.get('password')
         user = Participant.query.filter_by(email=email).first()
-        if user and bcrypt.check_password_hash(user.password, password):
+        if user and check_password_hash(user.password, password):
             login_user(user)
+            flash('Login Successful!', 'success')
             return redirect(url_for('user_dashboard'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
@@ -51,6 +80,7 @@ def signin():
 @login_required
 def logout():
     logout_user()
+    flash('logout Successful!', 'success')
     return redirect(url_for('home'))
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -78,7 +108,7 @@ def signup():
                 profile_image.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 profile_image_url = os.path.join('uploads/profile_images', unique_filename).replace('\\', '/')  # Updated profile image URL creation
             else:
-                flash('Invalid image format. Only jpg, jpeg, and png are allowed.')
+                flash('Invalid image format. Only jpg, jpeg, and png are allowed.', 'danger')
                 return redirect(request.url)
         else:
             profile_image_url = 'uploads/profile_images/default.jpg'  # Default image path
@@ -91,6 +121,7 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
+        flash('Registration Successful!', 'success')
         return redirect(url_for('user_dashboard'))
 
     return render_template('signup.html')
@@ -110,12 +141,13 @@ def edit_profile():
         user.email = request.form.get('email')
         user.telegram_user_id = request.form.get('telegram_user_id')
         if request.form.get('password'):
-            user.password = bcrypt.generate_password_hash(request.form.get('password')).decode('utf-8')
+            user.password = generate_password_hash(request.form.get('password'))
         user.dating_preference = request.form.get('dating_preference')
         user.bio = request.form.get('bio')
         user.user_entry_source = request.form.get('user_entry_source')
         user.notifications = bool(request.form.get('notifications'))
         db.session.commit()
+        flash('Profile Updated!', 'success')
         return redirect(url_for('user_dashboard'))
     return render_template('edit_profile.html', user=user)
 
@@ -130,7 +162,6 @@ def match_search():
 @login_required
 def search_participants():
     search_term = request.json.get('search_term', '')
-    print(search_term)
     participants = Participant.query.filter(
         (Participant.name.contains(search_term)) |
         (Participant.username.contains(search_term)) |
@@ -147,12 +178,11 @@ def search_participants():
             'bio': participant.bio,
             'is_matched': current_user.has_match_with(participant.id)
         })
-    print(participants_data)
     return jsonify(participants_data)
 
 @app.route('/add_match/<int:match_id>', methods=['POST'])
 @login_required
-def add_match(match_id):
+async def add_match(match_id):
     if current_user.id == match_id:
         return 'Cannot match with yourself', 400
 
@@ -163,9 +193,43 @@ def add_match(match_id):
     if match_exists:
         return 'Match already exists', 400
 
+    match_user = Participant.query.get_or_404(match_id)
+
     new_match = Match(user_id=current_user.id, match_id=match_id)
     db.session.add(new_match)
     db.session.commit()
+
+    # Send notifications
+    participant = current_user
+    match = match_user
+
+    # Email notifications
+    participant_email_subject = 'New Match Notification'
+    participant_email_template = render_template('match_email_template.html',
+                                                participant_name=participant.name,
+                                                participant_email=participant.email,
+                                                participant_phone=participant.phone_number,
+                                                participant_telegram=participant.telegram_user_id,
+                                                participant_image=participant.profile_image_url)
+    await send_async_email(participant.email, participant_email_subject, participant_email_template)
+
+    match_email_subject = 'New Match Notification'
+    match_email_template = render_template('match_email_template.html',
+                                           participant_name=match.name,
+                                           participant_email=match.email,
+                                           participant_phone=match.phone_number,
+                                           participant_telegram=match.telegram_user_id,
+                                           participant_image=match.profile_image_url)
+    await send_async_email(match.email, match_email_subject, match_email_template)
+
+    # Telegram notifications
+    participant_telegram_message = f"You have been added as a match by {match.name}."
+    await send_async_telegram(participant.telegram_user_id, participant_telegram_message)
+
+    match_telegram_message = f"You have been matched with {participant.name}."
+    await send_async_telegram(match.telegram_user_id, match_telegram_message)
+
+    flash('Match added successfully.', 'success')
     return 'Match added successfully'
 
 @app.route('/remove_match/<int:match_id>', methods=['POST'])
@@ -192,14 +256,98 @@ def view_profile(user_id):
 @app.route('/user_dashboard')
 @login_required
 def user_dashboard():
-    return render_template('user_dashboard.html', current_user=current_user)
+    matches = current_user.matched_users.all()
+    return render_template('user_dashboard.html', current_user=current_user, matches=matches)
+
 
 @app.route('/admin')
 @login_required
 def admin():
     if not current_user.admin:
+        flash('You Probably Visited a wrong link!', 'danger')
         return redirect(url_for('home'))
-    return render_template('admin.html')
+    
+    participants = Participant.query.all()
+    total_users = len(participants)
+    active_users = sum(1 for user in participants if user.is_active)
+    reports_count = sum(1 for user in participants if user.has_reports)
+
+    return render_template('admin_dashboard.html', participants=participants, total_users=total_users, active_users=active_users, reports_count=reports_count)
+
+
+@app.route('/admin/create_participant', methods=['POST'])
+@login_required
+def create_participant():
+    if not current_user.admin:
+        flash('Unauthorized access!', 'danger')
+        return redirect(url_for('admin'))
+    
+    name = request.form.get('name')
+    email = request.form.get('email')
+    phone_number = request.form.get('phone_number')
+    telegram_user_id = request.form.get('telegram_user_id')
+    date_joined = datetime.now()  # Or use a datepicker from the form
+
+    participant = Participant(name=name, email=email, phone_number=phone_number, 
+                              telegram_user_id=telegram_user_id)
+    
+    try:
+        db.session.add(participant)
+        db.session.commit()
+        flash('Participant created successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error creating participant: ' + str(e), 'danger')
+
+    return redirect(url_for('admin'))
+
+
+@app.route('/admin/edit_participant/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_participant(id):
+    if not current_user.admin:
+        flash('Unauthorized access!', 'danger')
+        return redirect(url_for('admin'))
+    
+    participant = Participant.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        participant.name = request.form.get('name')
+        participant.email = request.form.get('email')
+        participant.phone_number = request.form.get('phone_number')
+        participant.telegram_user_id = request.form.get('telegram_user_id')
+        
+        try:
+            db.session.commit()
+            flash('Participant updated successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash('Error updating participant: ' + str(e), 'danger')
+        
+        return redirect(url_for('admin'))
+
+    return render_template('edit_participant.html', participant=participant)
+
+
+@app.route('/delete_participant/<int:id>', methods=['POST'])
+def delete_participant(id):
+    participant = Participant.query.get_or_404(id)
+
+    try:
+        # Delete related matches first
+        Match.query.filter_by(user_id=id).delete()
+
+        # Then delete the participant
+        db.session.delete(participant)
+        db.session.commit()
+
+        flash('Participant deleted successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error deleting participant: ' + str(e), 'danger')
+        abort(500)
+
+    return redirect(url_for('admin'))
 
 @app.route('/export_database')
 @login_required
@@ -218,4 +366,4 @@ def static_files(path):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0",port=30000)

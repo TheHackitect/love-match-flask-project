@@ -50,28 +50,61 @@
         <h1>Edit Profile</h1>
     </div>
 
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="alert-container">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% endwith %}
+
     <div class="container">
         <!-- Edit Profile Form -->
-        <form>
+        <form action="{{ url_for('edit_profile') }}" method="post">
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+                <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
             </div>
             <div class="form-group">
-                <label for="phone">Phone Number:</label>
-                <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" required>
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+            </div>
+            <div class="form-group">
+                <label for="phone_number">Phone Number:</label>
+                <input type="tel" class="form-control" id="phone_number" name="phone_number" value="{{ user.phone_number }}" required>
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
             </div>
             <div class="form-group">
-                <label for="telegram">Telegram ID:</label>
-                <input type="text" class="form-control" id="telegram" placeholder="Enter your Telegram ID" required>
+                <label for="telegram_user_id">Telegram ID:</label>
+                <input type="text" class="form-control" id="telegram_user_id" name="telegram_user_id" value="{{ user.telegram_user_id }}" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password: <small>(leave blank to keep current password)</small></label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+            <div class="form-group">
+                <label for="dating_preference">Dating Preference:</label>
+                <input type="text" class="form-control" id="dating_preference" name="dating_preference" value="{{ user.dating_preference }}" required>
             </div>
             <div class="form-group">
                 <label for="bio">Bio:</label>
-                <textarea class="form-control" id="bio" rows="3" placeholder="Enter a short bio" required></textarea>
+                <textarea class="form-control" id="bio" name="bio" rows="3" required>{{ user.bio }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="user_entry_source">User Entry Source:</label>
+                <input type="text" class="form-control" id="user_entry_source" name="user_entry_source" value="{{ user.user_entry_source }}" required>
+            </div>
+            <div class="form-group">
+                <label for="notifications">Notifications:</label>
+                <input type="checkbox" id="notifications" name="notifications" {{ 'checked' if user.notifications else '' }}>
             </div>
             <button type="submit" class="btn btn-custom"><i class="fas fa-save"></i> Save</button>
         </form>

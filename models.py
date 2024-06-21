@@ -24,7 +24,15 @@ class Participant(db.Model, UserMixin):
     profile_image_url = db.Column(db.String(200), nullable=True, default='default.jpg')
     time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)    
 
-    matches = db.relationship('Match', backref='participant', lazy=True)
+    matches = db.relationship('Match', foreign_keys='Match.user_id', backref='user', lazy='dynamic')
+
+    matched_users = db.relationship(
+        'Participant', secondary='match',
+        primaryjoin='Participant.id == Match.user_id',
+        secondaryjoin='Participant.id == Match.match_id',
+        backref=db.backref('matched_by', lazy='dynamic'),
+        lazy='dynamic'
+    )
     admin = db.relationship('Admin', backref='participant', uselist=False)
 
     # Flask-Login attributes and methods
@@ -39,7 +47,12 @@ class Participant(db.Model, UserMixin):
     @property
     def is_anonymous(self):
         return False
-
+    @property
+    def has_reports(self):
+        # Example logic to determine if the participant has reports
+        # Replace with your actual logic
+        return True  # Example: always return True for demonstration
+    
     def get_id(self):
         return str(self.id)
 
@@ -51,6 +64,7 @@ class Participant(db.Model, UserMixin):
             (Match.user_id == self.id) & (Match.match_id == match_id)
         ).first() is not None
 
+# Match model remains the same
 class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('participant.id'), nullable=False)

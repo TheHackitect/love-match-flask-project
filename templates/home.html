@@ -97,7 +97,18 @@
         <!-- <div class="header">
             <h1>Love & Dating</h1>
         </div> -->
-        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="alert-container">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
         <!-- Jumbotron -->
         <div class="jumbotron text-left">
             <h1 class="display-4"><span class="first-text">Love</span> Lust Garden Party</h1>

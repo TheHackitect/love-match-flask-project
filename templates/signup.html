@@ -60,6 +60,18 @@
         <div class="header">
             <h1><span class="first-text">Queerhtx</span> Singles Mixer Registration</h1>
         </div>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="alert-container">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
 
         <!-- Sign Up Form -->
         <form id="signupForm" class="row" action="/signup" method="post" enctype="multipart/form-data">
