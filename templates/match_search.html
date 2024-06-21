@@ -146,8 +146,8 @@
                                                 <button class="btn btn-custom bio-btn" onclick="toggleBio(${participant.id})"><i class="fas fa-eye"></i> Click to Reveal Bio</button>
                                                 <p class="bio-text" id="bio-${participant.id}">${participant.bio}</p>
                                                 ${participant.is_matched ? 
-                                                    `<button class="btn btn-danger mt-2" onclick="removeMatch(${participant.id})"><i class="fas fa-heart-broken"></i> Remove Match</button>` :
-                                                    `<button class="btn btn-success mt-2" onclick="addMatch(${participant.id})"><i class="fas fa-heart"></i> Add Match</button>`}
+                                                    `<button class="btn btn-danger mt-2 remove-match" data-id="${participant.id}"><i class="fas fa-heart-broken"></i> Remove Match</button>` :
+                                                    `<button class="btn btn-success mt-2 add-match" data-id="${participant.id}"><i class="fas fa-heart"></i> Add Match</button>`}
                                             </div>
                                         </div>
                                     </div>
@@ -158,11 +158,13 @@
                 });
             }
 
-            function toggleBio(id) {
+            $(document).on('click', '.bio-btn', function() {
+                var id = $(this).data('id');
                 $(`#bio-${id}`).slideToggle();
-            }
+            });
 
-            function addMatch(userId) {
+            $(document).on('click', '.add-match', function() {
+                var userId = $(this).data('id');
                 $.ajax({
                     url: `/add_match/${userId}`,
                     method: 'POST',
@@ -170,9 +172,10 @@
                         searchParticipants($('#search').val().trim());
                     }
                 });
-            }
+            });
 
-            function removeMatch(userId) {
+            $(document).on('click', '.remove-match', function() {
+                var userId = $(this).data('id');
                 $.ajax({
                     url: `/remove_match/${userId}`,
                     method: 'POST',
@@ -180,7 +183,7 @@
                         searchParticipants($('#search').val().trim());
                     }
                 });
-            }
+            });
         });
     </script>
 </body>
