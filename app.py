@@ -14,6 +14,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from telegram import Bot
 from telegram.error import TelegramError
+from sqlalchemy import func
 
 
 executor = ThreadPoolExecutor()
@@ -160,12 +161,15 @@ def match_search():
 @app.route('/search_participants', methods=['POST'])
 @login_required
 def search_participants():
-    search_term = request.json.get('search_term', '')
+    search_term = request.json.get('search_term', '').lower()
+    
     participants = Participant.query.filter(
-        (Participant.name.contains(search_term)) |
-        (Participant.username.contains(search_term)) |
-        (Participant.email.contains(search_term)) |
-        (Participant.telegram_user_id.contains(search_term))
+        (func.lower(Participant.name).contains(search_term)) |
+        (func.lower(Participant.username).contains(search_term)) |
+        (func.lower(Participant.email).contains(search_term)) |
+        (func.lower(Participant.bio).contains(search_term)) |
+        (func.lower(Participant.dating_preference).contains(search_term)) |
+        (func.lower(Participant.telegram_user_id).contains(search_term))
     ).all()
 
     participants_data = []
@@ -178,7 +182,6 @@ def search_participants():
             'is_matched': current_user.has_match_with(participant.id)
         })
     return jsonify(participants_data)
-
 @app.route('/add_match/<int:match_id>', methods=['POST'])
 @login_required
 async def add_match(match_id):
